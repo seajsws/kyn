@@ -1,0 +1,179 @@
+@charset "UTF-8";
+/* CSS Document 
+ *
+ * Copyright 2010, TokBox, Inc.
+ *
+ */
+
+#header {
+	background-color: orange;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	padding-top: 1px;
+	padding-left: 50px;
+	padding-right: 50px;
+	padding-bottom: 1px;
+	margin-bottom: 5px;
+
+}
+
+#video {
+	width:100%;
+}
+
+body, html {
+	font-family: Georgia, serif;
+	color: #4c4c4c;
+	text-align:left;
+	
+	background-color: #f0f9fb;
+}
+h1 {
+	margin-bottom:10px
+}
+object {
+	float: left;
+}
+a,a:visited {
+	color: #0099CC;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+#opentok_console {
+	float: right;
+	width: 400px;
+	font-family: 'courier', monospace;
+	font-size: 12px;
+}
+
+#links {
+	float: top;
+}
+
+#instructions input {
+	display: none;
+}
+
+#instructions p {
+	line-height: 0.7;
+}
+
+#sessionControls {
+	float: top;
+}
+
+#pubControls input {
+	display: inline;
+}
+
+#publishForm {
+	font-size: 14px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#action a {
+	display:none;
+}
+
+#localview {
+	float: left;	
+	width: 250px;
+}
+
+div.controls {
+	width:220px;
+	padding:10 0 10 0;
+	font-size: 14px;
+}
+
+.videobar {
+	float: top;
+}
+
+.videobar-left {
+	float: left;	
+	width: 250px;
+}
+
+.smalltype {
+	font-size: 80%;
+	padding-bottom: 6px;
+}
+
+.description {
+	font-size: 90%;
+	padding-top: 6px;
+}
+
+#controls {
+	float: left;
+	text-align: left;
+	padding-right: 10px;
+}
+
+#publisherControls {
+	display: none;
+}
+
+#push-to-talk {
+	display: none;
+}
+
+#devicePanelContainer {
+	position: absolute;
+	left: 250px;
+	top: 10px;
+	display:none;
+}
+
+#devicePanelCloseButton {
+	position: relative;
+	z-index: 10;
+	margin-left: 285px;
+	margin-right: 12px;
+	padding: 3px;
+	text-align: center;
+	font-size: 11px;
+	background-color: lightgrey;
+}
+
+#devicePanelBackground {
+	background-color: lightgrey;
+	width: 340px;
+	height: 230px;
+}
+
+#devicePanelInset #devicePanel {
+	position: relative;
+	top: -74px;
+	left: -9px;
+}
+
+a.settingsClose:link,
+a.settingsClose:visited,
+a.settingsClose:hover {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+table {
+	clear: both;
+}
+
+td {
+	vertical-align: top;
+	padding-right: 15px;
+}
+
+.publisherContainer {
+	float: left;
+}
+
+.subscriberContainer {
+	width: 264px;
+	margin-left: 4px;
+	float:left;
+}

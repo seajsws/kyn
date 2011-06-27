@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+    <head>
+        <title>jQT Mail</title>
+        <style type="text/css" media="screen">@import "../../jqtouch/jqtouch.css";</style>
+        <style type="text/css" media="screen">@import "../../themes/apple/theme.css";</style>
+
+        <script src="../../jqtouch/jquery-1.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../jqtouch/jqtouch.js" type="application/x-javascript" charset="utf-8"></script>
+        <script src="../../extensions/iscroll/iscroll.js" type="application/x-javascript" charset="utf-8"></script>
+        <script type="text/javascript" charset="utf-8">
+            var jqtouch = $.jQTouch({
+              activableSelector: '#jqt ul > li.arrow, #jqt ol > li.arrow',
+              icon: 'mail.png'
+            });
+
+            $(document).ready(function(){
+              // initialize iscroll
+              var KEY_ISCROLL_OBJ = 'iscroll_object';
+              function refreshScroll($pane) {
+                $pane.find('.s-scrollwrapper, .s-innerscrollwrapper').each(function (i, wrap) {
+                  var $wrapper = $(wrap);
+                  var scroll = $wrapper.data(KEY_ISCROLL_OBJ);
+                  if (scroll !== undefined && scroll !== null) {
+                    scroll.refresh();
+                  }
+                });
+              }
+
+              var generatedRows = 0;
+              function loaded() {
+                $("#jqt").children().each(function (i, pane) {
+                  $(pane).find('.s-scrollwrapper, .s-innerscrollwrapper').each(function (i, wrap) {
+                    var $wrapper = $(wrap);
+
+                    var data = $wrapper.data(KEY_ISCROLL_OBJ);
+                    if (data === undefined || data === null) {
+                      var scroll;
+                      var options = {};
+                      if ($wrapper.hasClass("scrollrefresh")) {
+                        options = {
+                          pullToRefresh: "down",
+                          onPullDown: function () {
+                            setTimeout(function () {
+                              var el, li, i;
+                              el = $("#z-taskdue")[0];
+
+                              for (i=0; i<3; i++) {
+                                li = document.createElement('li');
+                                li.innerText = 'Generated row ' + (++generatedRows);
+                                el.insertBefore(li, el.childNodes[0]);
+                              }
+
+                              scroll.refresh(); // IMPORTANT!
+                            }, 1000); // <-- Simulate network congestion, remove setTimeout from production!
+                          }
+                        };
+                      }
+
+                      scroll = new iScroll(wrap, options);
+                      $wrapper.data(KEY_ISCROLL_OBJ, scroll);
+                      scroll.refresh();
+                    }
+                  });
+                  $(pane).bind('pageAnimationEnd', function(event, info) {
+                    if (info.direction == 'in') {
+                      refreshScroll($(this));
+                    }
+                  });
+                });
+                $(window).resize(function() {
+                  $('#jqt > .current').each(function(i, one) {
+                    refreshScroll($(one));
+                  });
+                });
+              }
+
+              loaded();
+
+              setTimeout(function() {
+                loaded();
+                $(window).resize();
+
+                setTimeout(function() {
+                  $(window).resize();
+                }, 1500);
+              }, 50);
+            });
+
+            // Add an onload function
+            $(function(){
+                // Dynamically set next page titles after clicking certain links
+                $('#home ul a, #mailbox ul a').click(function(){
+                    $( $(this).attr('href') + ' h1' ).html($(this).html());
+                });
+            });
+
+            // Add an onload function
+            $(function(){
+                // Dynamically set next page titles after clicking certain links
+                /*
+                $('#messages ul li a').click(function(){
+                    $($(this).attr('href') + ' h1').text($(this).text());
+                }); */
+                $('.pane ul li a').click(function(){
+                  var $autotitle = $('.autotitle', this);
+                  var t = $autotitle.text();
+                  if (!!t && t.length > 0) {
+                    $($(this).attr('href') + ' h1').text(t);
+                  }
+                });
+
+                // auto fill back button text
+                $('.pane ul li a').click(function(){
+                  var $pane = $(this).parents('.pane');
+                  var $h1 = $pane.find('.toolbar h1');
+
+                  var $next = $($(this).attr('href'));
+                  var $back = $next.find('.toolbar .back.autotext');
+
+                  var h1 = $h1.text();
+                  if (!!h1 && h1.length > 0) {
+                    $back.text(h1);
+                  } else {
+                    $back.text('Back');
+                  }
+                });
+            });
+
+            $("#jqt #messages ul > li.arrow").live('tap', function() {
+                jqtouch.goTo("#message", "slide");
+
+                // auto fill back button text
+                var $pane = $(this).parents('.pane');
+                var $h1 = $pane.find('.toolbar h1');
+
+                var $next = $("#message");
+                var $back = $next.find('.toolbar .back.autotext');
+
+                var h1 = $h1.text();
+                if (!!h1 && h1.length > 0) {
+                  $back.text(h1);
+                } else {
+                  $back.text('Back');
+                }
+            })
+        </script>
+    </head>
+    <body>
+        <div id="jqt">
+            <div id="home" class="pane" class="current">
+                <div class="toolbar">
+                    <h1>Accounts</h1>
+                    <!-- <a class="button slideup" id="infoButton" href="#about">About</a> -->
+                </div>
+                <div class="s-scrollwrapper contentwrap">
+                  <div class="s-scrollpane" id="homepane">
+                    <ul class="rounded">
+                      <li class="arrow"><a href="#mailbox" class="autotitle">Home</a></li>
+                      <li class="arrow"><a href="#mailbox" class="autotitle">Work</a></li>
+                      <li class="arrow"><a href="#mailbox" class="autotitle">MobileMe</a></li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+            <div id="mailbox" class="pane">
+                <div class="toolbar">
+                    <h1>Mailbox</h1>
+                    <a class="back autotext" href="#"></a>
+                    <a class="add slideup" id="newMessageLink" href="#new" name="newMessageLink">+</a>
+                </div>
+                <div class="s-scrollwrapper contentwrap">
+                  <div class="s-scrollpane" id="mailboxpane">
+                    <ul class="rounded">
+                        <li class="arrow"><a href="#messages" class="autotitle">Inbox</a></li>
+                        <li class="arrow"><a href="#messages" class="autotitle">Drafts</a></li>
+                        <li class="arrow"><a href="#messages" class="autotitle">Sent</a></li>
+                        <li class="arrow"><a href="#messages" class="autotitle">Trash</a></li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+            <div id="messages" class="pane">
+                <div class="toolbar">
+                    <h1>Messages</h1>
+                    <a href="#" class="back autotext"></a>
+                    <a class="button" id="editLink" href="#" name="editLink">Edit</a>
+                </div>
+                <div class="s-scrollwrapper contentwrap">
+                    <div class="s-scrollpane" id="messagespane">
+                        <ul class="mail">
+                            <li class="arrow unread">David Kaneda<span class="date">Today</span><span class="title autotitle">Re: jQTouch Alpha 2</span> <p>This is another span</p></li>
+                            <li class="arrow unread">John Doe<span class="date">Today</span><span class="title autotitle">Your account</span>
+                                <p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p>
+                            </li>
+                            <li class="arrow">Bank of America<span class="date">Today</span><span class="title autotitle">Your account</span> <p>Sample something</p></li>
+                            <li class="arrow">David Kaneda<span class="date">Today</span><span class="title autotitle">Re: jQTouch Alpha 2</span> <p>This is another span</p></li>
+                            <li class="arrow">John Doe<span class="date">Today</span><span class="title autotitle">Your account</span>
+                                <p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p>
+                            </li>
+                            <li class="arrow">Bank of America<span class="date">Today</span><span class="title autotitle">Your account</span> <p>Sample something</p></li>
+                            <li class="arrow">David Kaneda<span class="date">Today</span><span class="title autotitle">Re: jQTouch Alpha 2</span> <p>This is another span</p></li>
+                            <li class="arrow">John Doe<span class="date">Today</span><span class="title autotitle">Your account</span>
+                                <p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p>
+                            </li>
+                            <li class="arrow">Bank of America<span class="date">Today</span><span class="title autotitle">Your account</span> <p>Sample something</p></li>
+                            <li class="arrow">David Kaneda<span class="date">Today</span><span class="title autotitle">Re: jQTouch Alpha 2</span> <p>This is another span</p></li>
+                            <li class="arrow">John Doe<span class="date">Today</span><span class="title autotitle">Your account</span>
+                                <p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.\n\n Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p>
+                            </li>
+                            <li class="arrow">Bank of America<span class="date">Today</span><span class="title autotitle">Your account</span> <p>Sample something</p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <form id="new" class="edgetoedge" class="pane">
+                <div class="toolbar">
+                    <h1>New Message</h1>
+                    <input type='reset' value="Cancel"></input>
+                    <input class="button disabled" type="submit" value="Send" disabled></input>
+                </div>
+                <ul class="edgetoedge content">
+                    <li><label for="newname">To:</label><input type="text" name="name" id="newname" value=""></li>
+                    <li><label for="newfrom">Cc/Bcc, From:</label> <input type="text" id="newfrom"  name="bcc" placeholder="you@email.com"></li>
+                    <li><label for="newsubject">Subject:</label> <input type="text" id="newsubject" name="subject" placeholder="you@email.com"></li>
+                    <li><textarea>My email</textarea></li>
+                </ul>
+            </form>
+            <form id="message" class="pane">
+                <div class="toolbar">
+                    <h1>Read Message</h1>
+                    <a class="back autotext" href="#"></a>
+                    <div class="buttonset"><a class="button" href="#">Next</a><a class="button" href="#" disabled>Prev</a></div>
+                </div>
+                <ul class="edgetoedge content">
+                    <li><label for="messagename">To:</label><input type="text" name="name" id="messagename" value=""></li>
+                    <li><label for="messagefrom">Cc/Bcc, From:</label> <input type="text" id="messagefrom"  name="bcc" placeholder="you@email.com"></li>
+                    <li><label for="messagesubject">Subject:</label> <input type="text" id="messagesubject" name="subject" placeholder="you@email.com"></li>
+                    <li><textarea readonly="readonly">Reading an email sent to you.</textarea></li>
+                </ul>
+                <div class="navibar">
+                  <div></div>
+                  <a href="#reply" class="button">Reply</a>
+                </div>
+            </form>
+            <form id="reply" class="edgetoedge" class="pane">
+                <div class="toolbar">
+                    <h1>Reply</h1>
+                    <a class="cancel autotext" href="#">Cancel</a>
+                    <a class="actionButton" href="#">Send</a>
+                </div>
+                <div class="bar">
+                  <input type="radio" name="whom" title="Reply" checked/>
+                  <input type="radio" name="whom" title="Reply All"/>
+                  <input type="radio"  name="whom" title="Forward"/>
+                </div>
+                <div class="s-scrollwrapper contentwrap">
+                  <ul class="s-scrollpane edgetoedge content" id="replypane">
+                    <ul class="">
+                      <li><label for="messagename">To:</label><input type="text" name="name" id="messagename" value=""></li>
+                      <li><label for="messagefrom">Cc/Bcc, From:</label> <input type="text" id="messagefrom"  name="bcc" placeholder="you@email.com"></li>
+                      <li><label for="messagesubject">Subject:</label> <input type="text" id="messagesubject" name="subject" placeholder="you@email.com"></li>
+                      <li><textarea size="10">
+
+
+Sent from my iPhone!
+----
+
+On Nov 11, 20XX, at 11:11 PM, Someone <someone@somewhere.com> wrote:
+Reading an email sent to you.
+                      </textarea></li>
+                  </ul>
+                </div>
+            </form>
+            <div id="features" class="pane">
+                <div class="toolbar">
+                    <h1>Features</h1>
+                    <a class="back button" href="#home">jQTouch</a>
+                </div>
+                <form action="#" method="get" accept-charset="utf-8">
+                    <p><input type="submit" value="Continue →"></p>
+                </form>
+                <div class="pad">
+                    <ul>
+                        <li>One-line setup, with options for selectors, viewport settings, icon path and glossiness, and status bar style</li>
+                        <li>Pages can be built in a single HTML file, or loaded dynamically via GET or POST</li>
+                        <li>Native, hardware-accelerated, page animations, including slide in/out, slide up/down, and 3D flip. All with history support.</li>
+                        <li>Image preloading functions</li>
+                        <li>Easy to theme</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="flipdemo" class="pane">
+                <div class="pad">
+                    <div style="font-size: 1.5em; text-align: center; margin: 160px 0 160px; font-family: Marker felt;">
+                        Pretty smooth, eh?
+                    </div><a href="#" class="back whiteButton">Go back</a>
+                </div>
+            </div>
+            <form id="formdemo" title="Movie Search" action="search.php" method="post" name="formdemo" class="pane">
+                <div class="toolbar">
+                    <h1>
+                        Demos
+                    </h1><a class="back button" href="#">Home</a>
+                </div>
+                <div class="pad">
+                    <fieldset>
+                        <div class="row">
+                            <label>Movie</label> <input type="text" name="movie" value="">
+                        </div>
+                        <div class="row">
+                            <label>Zip</label> <input type="text" name="zip" value="">
+                        </div>
+                    </fieldset><input type="submit">
+                </div>
+            </form>
+            <form id="searchForm" class="dialog" action="search.php" name="searchForm" class="pane">
+                <fieldset>
+                    <h1>Music Search</h1>
+                    <a class="button leftButton" type="cancel">Cancel</a> <a class="button blueButton" type="submit">Search</a> <label>Artist:</label> <input id="artist" type="text" name="artist"> <label>Song:</label> <input type="text" name="song">
+                    <p>This form retrieves the next page with Ajax via a POST request.</p>
+                </fieldset>
+            </form>
+            <div id="license" class="pane">
+                <div class="pad">
+                    <p><strong>The MIT License</strong></p>
+                    <p>Copyright © 2009 David Kaneda</p>
+                    <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+                    <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+                    <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+                    <a href="#" class="grayButton back">Return</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

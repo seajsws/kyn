@@ -1,0 +1,340 @@
+/* Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd,
+/* ol, ul, li, */
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #eeeeee;
+  font-size: 100%;
+}
+
+body {
+  overflow-y: scroll;
+  background: #1c1d1e;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+:focus {
+  outline: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* = style = */
+#connect-dialog #connectLink {
+}
+
+#connect-dialog #disconnectLink {
+  display: none;
+}
+
+#connect-dialog #publishLink {
+  display: none;
+}
+
+#connect-dialog #unpublishLink {
+  display: none;
+}
+
+#connect-dialog .spinnerfloat {
+   margin-top: 20px; margin-bottom: 15px;
+   margin-left: auto; margin-right: auto;  
+}
+
+#connect-dialog .spinnerfloat div.spinner {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+}
+
+ul.inline {
+   margin-top: 20px; margin-bottom: 15px;
+   margin-left: auto; margin-right: auto;
+   border: 2px solid grey;
+   background-color: grey;
+    -webkit-border-radius: 8px; -moz-border-radius: 8px; border-radius: 8px;  
+}
+
+ul.inline li {
+  margin: 10px;
+}
+
+.friend img {
+	margin: 0 0 0 0;
+	padding: 0;
+    -webkit-transition: opacity .25s linear;
+    -moz-transition: opacity .25s linear;
+    -o-transition: opacity .25s linear;
+    transition: opacity .25s linear;
+
+	-webkit-box-shadow: inset 0px -1px 3px rgba(0,0,0,.8);
+	-moz-box-shadow: inset 0px -1px 3px rgba(0,0,0,.8);
+	box-shadow: inset 0px -1px 3px rgba(0,0,0,.8);
+}
+
+.friend-img:hover {
+	-webkit-box-shadow: 0px 1px 1px rgba(255,255,255,.5);
+	-moz-box-shadow: 0px 1px 1px rgba(255,255,255,.5);
+	box-shadow: 0px 1px 1px rgba(255,255,255,.5);
+}
+
+.friend img {
+}
+
+
+header {
+	height: 52px;
+	background: url(../images/header.png) repeat-x;
+}
+
+.logo {
+	margin-left: 120px;
+}
+
+#main {
+	background: #414345;
+}
+
+footer {
+	width: 80%;
+	margin: 0 auto;
+	text-align:center;
+}
+
+.player-container-outer {
+	text-align:center;
+	overflow: hidden;
+	resize: vertical;
+	height: 20px;
+	min-height: 10px;
+	width: 100%;
+	max-height: 100%;
+	background: #2c2d2d;
+	padding: 50px 0;
+	position: relative;
+	-webkit-box-shadow: inset 0px -5px 10px rgba(0,0,0,.35);
+	-moz-box-shadow: inset 0px -5px 10px rgba(0,0,0,.35);
+	box-shadow: inset 0px -5px 10px rgba(0,0,0,.35);
+	border-bottom: 1px solid rgba(255,255,255,.05);
+	}
+
+.player-container-outer:after {
+	content: "";
+	position: absolute;
+	height: 17px;
+	bottom: 0
+	left:0;
+	background: url(../images/bar.png) repeat-x;
+}
+
+.drag-bar {
+	position: absolute;
+	top:0;
+	left:0;
+	width: inherit;
+	height: 47px;
+	background: url(../images/bar.png) repeat-x;
+}
+
+.player-container-inner {
+	width: 80%;
+	margin: 0 auto;
+	z-index: 5;
+}
+
+.friends {
+	width: 80%;
+	margin: 20px auto;
+}
+
+.player {
+    display: block;
+    margin-right: 350px;
+    min-height: 280px;
+  	background: #1c1d1e;
+	border: 20px solid #1c1d1e;
+	-webkit-border-radius: 8px; -moz-border-radius: 8px; border-radius: 8px;
+	z-index: 4;
+}
+
+#shubs_player {
+	border: 6px solid #1c1d1e;
+}
+
+.inline > li {
+    display: inline-block;
+    margin: 0 10px;
+    border: 5px solid #4c4d4e;
+    background-color: transparent;
+    padding: 2px 5px;
+    -webkit-border-radius: 8px; -moz-border-radius: 8px; border-radius: 8px;
+}
+
+.inline > li.selected {
+    border: 5px solid #1c1d1e;
+    background-color: #1c1d1e;
+}
+
+.playlist {
+    position: absolute;
+	right: 20px;
+	width: 300px;
+	background: #4c4d4e;
+	color: #eeeeee;
+	-webkit-border-radius: 8px; -moz-border-radius: 8px; border-radius: 8px;
+	text-align: left;
+	padding: 20px;
+	font-size: 14px;
+	color: #eeeeee;
+}
+
+.playlist li {
+	display: inline-block;
+	line-height: 24px;
+	font-size: 14px;
+	color: #eeeeee;
+
+}
+
+.playlist h3 {
+	font-size: 2.0em;
+	font-weight: 600;
+	line-height: 1.3em;
+	border-bottom: 1px solid #eeeeee;
+	padding: 0 0 10px 0;
+	margin-bottom: 5px;
+}
+
+.playlist h3 small, .playlist h3 a.small {
+    font-weight: normal;
+    font-size: 0.5em;
+    border: 5px solid #1c1d1e;
+    background-color: #1c1d1e;
+    -webkit-border-radius: 8px; -moz-border-radius: 8px; border-radius: 8px;
+}
+
+input[type="button"] {
+    padding: 10px 8px 9px 8px;
+    font-weight: 700;
+    margin: 0 10px 10px 3px;
+    font-size: 15px;
+    letter-spacing: -1px;
+    line-height: 10px;
+    color: #333;
+    border: none;
+    cursor: pointer;
+	background-image: -webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.35, rgb(237,160,59)),
+	    color-stop(0.68, rgb(243,189,71))
+	);
+	background-image: -moz-linear-gradient(
+	    center bottom,
+	    rgb(237,160,59) 35%,
+	    rgb(243,189,71) 68%
+	);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    }
+
+    .youtube {
+	width: 100%;
+}
+
+input[type="text"] {
+	background: #777777;
+
+	outline: none;
+	border: none;
+	color: #222222;
+	padding: 4px 8px;
+}
+
+/* @group Spinner */
+
+body.block::after {
+  display: block; position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  content: "";
+  background-color: white;
+  opacity: 0.5;
+}
+
+/*
+body.block .spinnerfloat {
+  display: block; position: absolute;
+  top: 30%;
+  left: 45%;
+  z-index: 99;
+}*/
+
+/*
+body:not(.block) .spinnerfloat {
+  display: none;
+}*/
+
+/* http://37signals.com/svn/posts/2577-loading-spinner-animation-using-css-and-webkit */
+/*
+div.spinner {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+}*/
+
+div.spinner div {
+  width: 13%;
+  height: 26%;
+  background: #fff;
+  position: absolute;
+  left: 44.5%;
+  top: 37%;
+  opacity: 0;
+}
+
+div.spinner.animate div {
+  -webkit-animation: fade 1s linear infinite;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.2);
+}
+
+div.spinner div.bar1 {-webkit-transform:rotate(0deg) translate(0, -142%); -webkit-animation-delay: 0s;}
+div.spinner div.bar2 {-webkit-transform:rotate(30deg) translate(0, -142%); -webkit-animation-delay: -0.9167s;}
+div.spinner div.bar3 {-webkit-transform:rotate(60deg) translate(0, -142%); -webkit-animation-delay: -0.833s;}
+div.spinner div.bar4 {-webkit-transform:rotate(90deg) translate(0, -142%); -webkit-animation-delay: -0.75s;}
+div.spinner div.bar5 {-webkit-transform:rotate(120deg) translate(0, -142%); -webkit-animation-delay: -0.667s;}
+div.spinner div.bar6 {-webkit-transform:rotate(150deg) translate(0, -142%); -webkit-animation-delay: -0.5833s;}
+div.spinner div.bar7 {-webkit-transform:rotate(180deg) translate(0, -142%); -webkit-animation-delay: -0.5s;}
+div.spinner div.bar8 {-webkit-transform:rotate(210deg) translate(0, -142%); -webkit-animation-delay: -0.41667s;}
+div.spinner div.bar9 {-webkit-transform:rotate(240deg) translate(0, -142%); -webkit-animation-delay: -0.333s;}
+div.spinner div.bar10 {-webkit-transform:rotate(270deg) translate(0, -142%); -webkit-animation-delay: -0.25s;}
+div.spinner div.bar11 {-webkit-transform:rotate(300deg) translate(0, -142%); -webkit-animation-delay: -0.1667s;}
+div.spinner div.bar12 {-webkit-transform:rotate(330deg) translate(0, -142%); -webkit-animation-delay: -0.0833s;}
+
+@-webkit-keyframes fade {
+  from {opacity: 1;}
+  to {opacity: 0.25;}
+}
+
+/* @end */
