@@ -55,39 +55,34 @@
       <div id="joinbuttons" class="logo">
         <img src="./images/logo.png">
       </div>
-      <div id="dialogs">
-        <form id="connect-dialog" class="dialog" action="" method="POST">
-          <h2>Getting <span>Ready</span>!</h2>
-          <div class="spinnerfloat">
-            <div class="spinner animate">
-              <div class="bar1"></div><div class="bar2"></div><div class="bar3"></div><div class="bar4"></div>
-              <div class="bar5"></div><div class="bar6"></div><div class="bar7"></div><div class="bar8"></div>
-              <div class="bar9"></div><div class="bar10"></div><div class="bar11"></div><div class="bar12"></div>
-            </div>
+    </div>
+    <div id="dialogs">
+      <form id="connect-dialog" class="dialog" action="" method="POST">
+        <h2>Getting <span>Ready</span>!</h2>
+        <div class="spinnerfloat">
+          <div class="spinner animate">
+            <div class="bar1"></div><div class="bar2"></div><div class="bar3"></div><div class="bar4"></div>
+            <div class="bar5"></div><div class="bar6"></div><div class="bar7"></div><div class="bar8"></div>
+            <div class="bar9"></div><div class="bar10"></div><div class="bar11"></div><div class="bar12"></div>
           </div>
-          <span class="status">Connecting...</span>
-        </form>
-        <form id="roomnumber-dialog" class="dialog" action="" method="POST">
-          <h2>Enter the room <span>number</span></h2>
-          <input type="text" class="answer" placeholder"....."/>
-          <input type="button" class="next" value="Next"/>
-        </form>
-        <form id="pickroom-dialog" class="dialog" action="" method="POST">
-          <h2>Pick a <span>Room</span> to join</h2>
-          <ul class="inline">
-             <li type="button" id="publicroom" class="selected">Public</li>
-             <li type="button" id="enterroom">Private</li>
-             <li type="button" id="createroom">New</li>
-          </ul>
-          <input type="button" class="next" value="Next"/>
-        </form>
-        <form id="browser-dialog" class="dialog show" action="" method="POST">
-          <h2>Project is optimized for <span>Chrome</span></h2>
-          Use Chrome for the best result
-          <br>
-          <input type="button" class="next" value="Okay"/>
-        </form>
-      </div>
+        </div>
+        <span class="status">Connecting...</span>
+      </form>
+      <form id="pickroom-dialog" class="dialog" action="" method="POST">
+        <h2>Options</h2>
+        <ul class="inline">
+           <li type="button" id="publicroom" class="selected">Option 1</li>
+           <li type="button" id="enterroom">Option 2</li>
+           <li type="button" id="createroom">Option 3</li>
+        </ul>
+        <input type="button" class="next" value="Next"/>
+      </form>
+      <form id="browser-dialog" class="dialog show" action="" method="POST">
+        <h2>Project is optimized for <span>Chrome</span></h2>
+        Use Chrome for the best result
+        <br>
+        <input type="button" class="next" value="Okay"/>
+      </form>
     </div>
   </body>
 </html>
