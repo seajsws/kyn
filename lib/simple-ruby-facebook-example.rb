@@ -98,12 +98,12 @@ class SimpleRubyFacebookExample < Sinatra::Application
       when 200, 201, 202
         dbresponse
       else
-        halt dbresponse.code, "put to #{DB}/#{doc}?_rev=#{args} [#{data}] - pass thru '%s'<br> '%s'!" % [dbresponse.code, dbresponse.body] 
+        halt dbresponse.code, "put to #{DB}/#{doc}?rev=#{args} [#{data}] - pass thru '%s'<br> '%s'!" % [dbresponse.code, dbresponse.body] 
       end
     }
   end
 
-  post '/jdata/*/*' do | doc, args |
+  post '/jdata/*/*' do | doc, args|
     "post to #{DB}/#{doc}?#{args}"
     request.body.rewind
     data = request.body.read
@@ -113,7 +113,20 @@ class SimpleRubyFacebookExample < Sinatra::Application
         dbresponse
       else
         request.body.rewind
-        halt dbresponse.code, "post to #{DB}/#{doc}?_rev=#{args} [#{data}] - pass thru '%s'<br> '%s'!" % [dbresponse.code, dbresponse.body] 
+        halt dbresponse.code, "post to #{DB}/#{doc}?rev=#{args} [#{data}] - pass thru '%s'<br> '%s'!" % [dbresponse.code, dbresponse.body] 
+      end
+    }
+  end
+
+  delete '/jdata/*/*' do | doc, args|
+    "delete to #{DB}/#{doc}?#{args}"
+    doc = RestClient.delete("#{DB}/#{doc}?rev=#{args}") { |dbresponse, dbrequest, dbresult|
+      case dbresponse.code
+      when 200, 201, 202
+        dbresponse
+      else
+        request.body.rewind
+        halt dbresponse.code, "delete to #{DB}/#{doc}?_rev=#{args} - pass thru '%s'<br> '%s'!" % [dbresponse.code, dbresponse.body] 
       end
     }
   end

@@ -29,15 +29,15 @@
              $("body").removeClass("modal");
              $(".username").text(val);
            }
+
+           items.read(val, function(id, item) {
+             console.warn("read: " + id);
+           }, function(exception) {
+             console.warn("exception: " + JSON.stringify(exception));
+           });
+
            event.preventDefault();
          });
-
-         /*
-         $(".dialog input[type='submit']").bind("click", function(event) {
-           $(this).closest(".dialog").removeClass("show");
-           $("body").removeClass("modal");
-           event.preventDefault();
-         });*/
 
          $(".dialog input[type='button'].cancel").bind("click", function(event) {
            $(this).closest(".dialog").removeClass("show");
@@ -50,6 +50,59 @@
            $("#name-dialog").addClass("show");
          });
        });
+
+       var DOC_URL = "/jdata";
+       var rev = '';
+       var items = {
+           read: function(id, fn, err) {
+             var url = DOC_URL + "/" + id;
+             $.ajax({
+               type: 'GET',
+               url: url,
+               dataType: 'json',
+               beforeSend: function(xhr) {},
+               success: function(data) {
+                 console.log("read succeded: " + JSON.stringify(data));
+                 rev = data._rev;
+                 fn(data);
+               },
+               error: function(request, textStatus, errorThrown) {
+                 // err
+                 var exception = {datasetname: 'aspen', status: request.status, message: request.statusText, url: url, method: "read", kind: textStatus};
+                 if (exception.status === 404 || exception.status == '404') {
+                   items.update(id, {}, fn, function(nestedRequest, nestedTextStatus, nestedErrorThrown) {
+                     var except = {datasetname: 'aspen', status: nestedRequest.status, message: nestedRequest.statusText, url: url, method: "read", kind: nestedTextStatus};
+                     except.nested = exception;
+                     err(except);
+                   });
+                 } else {
+                   err(exception);
+                 }
+               }
+             });
+           },
+           update: function(id, json, fn, err) {
+             console.warn("updating...");
+             var url = DOC_URL + "/" + id + "/" + encodeURIComponent(rev);
+             $.ajax({
+               type: 'PUT',
+               url: url,
+               data: json,
+               dataType: 'json',
+               beforeSend: function(xhr) {},
+               success: function(data) {
+                 json._rev = data._rev;
+                 json._id = data._id;
+                 fn(json);
+               },
+               error: function(request, textStatus, errorThrown) {
+                 // err
+                 var exception = {datasetname: 'aspen', status: request.status, message: request.statusText, url: url, method: "update", kind: textStatus};
+                 err(exception);
+               }
+             });
+           }
+         };
     </script>
   </head>
   <body class="modal">
@@ -74,7 +127,7 @@
       <form id="name-dialog" class="dialog" action="" method="POST">
         <h2>Please enter your <span>name</span></h2>
         <br>
-        <label for="">Name: </label><input type="text" class="next" name="username" value=""/>
+        <label for="">Name: </label><input type="text" class="next" name="username" value="tyip"/>
         <br>
         <input type="submit" class="next" value="Done"/>
       </form>
