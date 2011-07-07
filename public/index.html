@@ -21,11 +21,23 @@
        $(document).ready(function() {
          console.warn("Document Ready");
 
+         $("#name-dialog").bind("submit", function(event) {
+           console.warn("submitting");
+           var val = $(this).find("[name='username']").val();
+           console.warn("val: " + val);
+           if (!!val) {
+             $("body").removeClass("modal");
+             $(".username").text(val);
+           }
+           event.preventDefault();
+         });
+
+         /*
          $(".dialog input[type='submit']").bind("click", function(event) {
            $(this).closest(".dialog").removeClass("show");
            $("body").removeClass("modal");
            event.preventDefault();
-         });
+         });*/
 
          $(".dialog input[type='button'].cancel").bind("click", function(event) {
            $(this).closest(".dialog").removeClass("show");
@@ -33,19 +45,9 @@
            event.preventDefault();
          });
 
-         $("#pickroom-dialog input[type='button'].next").bind("click", function(event) {
-           $(this).closest(".dialog").removeClass("show");
-           $("#connect-dialog").addClass("show");
-         });
-
-         $("#roomnumber-dialog input[type='button'].next").bind("click", function(event) {
-           $(this).closest(".dialog").removeClass("show");
-           $("#connect-dialog").addClass("show");
-         });
-
          $("#browser-dialog input[type='button'].next").bind("click", function(event) {
            $(this).closest(".dialog").removeClass("show");
-           $("#pickroom-dialog").addClass("show");
+           $("#name-dialog").addClass("show");
          });
        });
     </script>
@@ -54,6 +56,7 @@
     <div id="container">
       <div id="joinbuttons" class="logo">
         <img src="./images/logo.png">
+        Welcome, <span class="username">[[Blank]]</span>
       </div>
     </div>
     <div id="dialogs">
@@ -68,14 +71,12 @@
         </div>
         <span class="status">Connecting...</span>
       </form>
-      <form id="pickroom-dialog" class="dialog" action="" method="POST">
-        <h2>Options</h2>
-        <ul class="inline">
-           <li type="button" id="publicroom" class="selected">Option 1</li>
-           <li type="button" id="enterroom">Option 2</li>
-           <li type="button" id="createroom">Option 3</li>
-        </ul>
-        <input type="button" class="next" value="Next"/>
+      <form id="name-dialog" class="dialog" action="" method="POST">
+        <h2>Please enter your <span>name</span></h2>
+        <br>
+        <label for="">Name: </label><input type="text" class="next" name="username" value=""/>
+        <br>
+        <input type="submit" class="next" value="Done"/>
       </form>
       <form id="browser-dialog" class="dialog show" action="" method="POST">
         <h2>Project is optimized for <span>Chrome</span></h2>
