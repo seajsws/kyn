@@ -4,6 +4,7 @@ Features:
 
 - Allow sign-in
 - Associate Twitter account 
+<<<<<<< HEAD
 - Enter skills
 
 -test :)
@@ -16,3 +17,6 @@ Made with the help of this two awesome gems:
 Sinatra -> http://www.sinatrarb.com/
 Koala -> http://github.com/arsduo/koala
 
+=======
+- Enter skills
+>>>>>>> d753f5041297309988ee7e704224d5777e1f81a2
