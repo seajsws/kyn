@@ -175,7 +175,9 @@ function SimpleBareSet(conf) {
     },
     finder: function(entry, filters) {
       var result;
-      if (!$.isFunction(filters)) {
+      if (filters === null || filters === undefined) {
+        result = true;
+      } else if (!$.isFunction(filters)) {
         var matchAll = true;
         var matchSome = false;
         for (var key in filters) {
@@ -235,9 +237,11 @@ function SimpleBareSet(conf) {
     var cont;
     for (var id in entries) {
       count++;
-      cont = fn(id, entries[id]);
-      if (cont === false)
-        break;
+      if (conf.finder(entries[id], filters)) {
+        cont = fn(id, entries[id]);
+        if (cont === false)
+          break;
+      }
     }
     if (!!sumFn && $.isFunction(sumFn)) {
       sumFn(count, cont);
@@ -446,7 +450,8 @@ function SimpleDataSet(conf) {
     },
     isEventEnabled: function() {
       return true;
-    }
+    },
+    isBrowseFilterSupported: false
   }, conf);
 
   var entries = new DataSet(conf);
@@ -478,9 +483,13 @@ function SimpleDataSet(conf) {
       innerset.start();
     }
     entries.browse(function(id, item) {
-      entries.read(id, function(id, item) {
+      if (myconf.eagarbrowse) {
         entries.trigger('added', {entryId: id, entry: item});
-      });
+      } else {
+        entries.read(id, function(id, item) {
+          entries.trigger('added', {entryId: id, entry: item});
+        });
+      }
     }, function(exception) {
       entries.trigger("error", exception);
     });
@@ -573,7 +582,19 @@ function SimpleDataSet(conf) {
     var myErrFn = getMyErrFn(err);
     sumFn = !!sumFn? sumFn: function() {}; 
 
-    innerset.browse(fn, myErrFn, sumFn, filters);
+    if (myconf.isBrowseFilterSupported || filters === undefined || filters === null) {
+      innerset.browse(fn, myErrFn, sumFn, filters);
+    } else {
+      var count = 0;
+      innerset.browse(function(id, item) {
+        if (Items.match(filters, item)) {
+          count++;
+          fn(id, item);
+        }
+      }, myErrFn, function() {
+        sumFn(count);
+      });
+    }
   };
 
   entries.findOnce = function(filters) {

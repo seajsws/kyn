@@ -290,10 +290,45 @@ var Threads = new function() {
   };
 };
 
-var Finds = new function() {
+/**
+ * 
+ */
+var Items = new function() {
+  this.match = function(filters, entries) {
+    var result = false;
+
+    if (filters === undefined || filters === null) {
+      result = true;
+    } else if ($.isFunction(filters)) {
+      var args = Array.prototype.slice.call(arguments).splice(1);
+      result = filters.apply(this, args);
+    } else {
+      var matchAll = true;
+      var matchSome = false;
+      for (var key in filters) {
+        if (entry === undefined) {
+          // problematic
+          matchAll = false;
+          break;
+        } else if (filters[key] !== entry[key]) {
+          matchAll = false;
+          break;
+        }
+        matchSome = true; // make sure filter is non-empty
+      }
+      result = matchSome && matchAll;
+    }
+    return result;
+  };
+};
+
+var Finder = new function() {
   this.match = function(entry, filters) {
     var result = false;
-    if (!$.isFunction(filters)) {
+
+    if (filters === undefined || filters === null) {
+      result = true;
+    } else if (!$.isFunction(filters)) {
       var matchAll = true;
       var matchSome = false;
       for (var key in filters) {
@@ -624,6 +659,13 @@ var Arrays = new function() {
     var rest = array.slice((to || from) + 1 || array.length);
     array.length = from < 0 ? array.length + from : from;
     return array.push.apply(array, rest);
+  };
+  this.contains = function(array, item) {
+    var result = false;
+    if (array !== undefined && array !== null && array.length > 0 && array.length > 0) {
+      result = array.indexOf(item) >= 0;
+    }
+    return result;
   };
   return instance;
 };
