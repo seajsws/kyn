@@ -11,10 +11,10 @@ DB = "#{ENV['CLOUDANT_URL']}/jdata"
 
 class SimpleRubyFacebookExample < Sinatra::Application
 
-	include Koala
+  include Koala
 
-	set :root, APP_ROOT
-	enable :sessions
+  set :root, APP_ROOT
+  enable :sessions
 
 
   get '/' do
