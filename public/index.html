@@ -18,98 +18,118 @@
     <script src="main.js" type="text/javascript"></script>
     <script src="http://connect.facebook.net/en_US/all.js"></script>
     <script>
+       App = {
+         KEY: {
+           USER_ALIAS: "userid",
+           PROJECT_NAME: "project-name",
+         },
+         users: ['hello', 'world', 'foo', 'bar'],
+         useralias: "",
+         projectname: ""
+       };
        $(document).ready(function() {
          console.warn("Document Ready");
 
+         var items;
+
          $("#name-dialog").bind("submit", function(event) {
-           console.warn("submitting");
-           var val = $(this).find("[name='username']").val();
-           console.warn("val: " + val);
-           if (!!val) {
-             $("body").removeClass("modal");
-             $(".username").text(val);
-           }
-
-           items.read(val, function(id, item) {
-             console.warn("read: " + id);
-           }, function(exception) {
-             console.warn("exception: " + JSON.stringify(exception));
-           });
-
            event.preventDefault();
-         });
 
+           var $dialog = $(this);
+           var useralias = $dialog.find("input[name='useralias']").val();
+           var projectname = $dialog.find("input[name='projectname']").val();
+           if (!!useralias && !!projectname) {
+             App.useralias = useralias;
+             App.projectname = projectname;
+             App.users.push(useralias);
+
+             localStorage.setItem(App.KEY.USER_ALIAS, useralias);
+             localStorage.setItem(App.KEY.PROJECT_NAME, projectname);
+
+             bindmodel(projectname);
+
+             $(".username").text("Welcome, " + useralias);
+             $(".projectname").text("Project " + projectname);
+             $("head title").text("Project " + projectname + " - Aspen");
+
+             $("body").removeClass("modal");
+             $dialog.removeClass("show");
+           }
+         });
+         $(".link-logout").bind("click", function(event) {
+           console.warn("logging out");
+           localStorage.removeItem(App.KEY.USER_ALIAS);
+           localStorage.removeItem(App.KEY.PROJECT_NAME);
+           window.location.reload();
+         });
          $(".dialog input[type='button'].cancel").bind("click", function(event) {
            $(this).closest(".dialog").removeClass("show");
            $("body").removeClass("modal");
            event.preventDefault();
          });
-
          $("#browser-dialog input[type='button'].next").bind("click", function(event) {
            $(this).closest(".dialog").removeClass("show");
-           $("#name-dialog").addClass("show");
+           $("body").removeClass("modal");
          });
+
+         // detect browser
+         var agent = navigator.userAgent.toLowerCase();
+         if (agent.search("webkit") > -1 || agent.search("chrome") > -1) { 
+           $("#browser-dialog input[type='button']").click();
+         }
+
+         // do user
+         var useralias = localStorage.getItem(App.KEY.USER_ALIAS);
+         var projectname = localStorage.getItem(App.KEY.PROJECT_NAME);
+         if (!useralias || !projectname) {           
+           $("#name-dialog").addClass("show").find("input:not([readonly]").first().focus();
+           $("body").addClass("modal");
+         } else {
+           App.useralias = useralias; 
+           App.projectname = projectname;
+           App.users.push(useralias);
+
+           bindmodel(projectname);
+
+           $(".username").text("Welcome, " + useralias);
+           $(".projectname").text("Project " + projectname);
+           $("head title").text("Project " + projectname + " - Aspen");
+         }
        });
 
-       var DOC_URL = "/jdata";
-       var rev = '';
-       var items = {
-           read: function(id, fn, err) {
-             var url = DOC_URL + "/" + id;
-             $.ajax({
-               type: 'GET',
-               url: url,
-               dataType: 'json',
-               beforeSend: function(xhr) {},
-               success: function(data) {
-                 console.log("read succeded: " + JSON.stringify(data));
-                 rev = data._rev;
-                 fn(data);
-               },
-               error: function(request, textStatus, errorThrown) {
-                 // err
-                 var exception = {datasetname: 'aspen', status: request.status, message: request.statusText, url: url, method: "read", kind: textStatus};
-                 if (exception.status === 404 || exception.status == '404') {
-                   items.update(id, {}, fn, function(nestedRequest, nestedTextStatus, nestedErrorThrown) {
-                     var except = {datasetname: 'aspen', status: nestedRequest.status, message: nestedRequest.statusText, url: url, method: "read", kind: nestedTextStatus};
-                     except.nested = exception;
-                     err(except);
-                   });
-                 } else {
-                   err(exception);
-                 }
-               }
-             });
-           },
-           update: function(id, json, fn, err) {
-             console.warn("updating...");
-             var url = DOC_URL + "/" + id + "/" + encodeURIComponent(rev);
-             $.ajax({
-               type: 'PUT',
-               url: url,
-               data: json,
-               dataType: 'json',
-               beforeSend: function(xhr) {},
-               success: function(data) {
-                 json._rev = data._rev;
-                 json._id = data._id;
-                 fn(json);
-               },
-               error: function(request, textStatus, errorThrown) {
-                 // err
-                 var exception = {datasetname: 'aspen', status: request.status, message: request.statusText, url: url, method: "update", kind: textStatus};
-                 err(exception);
-               }
-             });
-           }
-         };
+       var bindmodel = function(projectname) {
+         items = new model.CouchDBDataSet({
+           name: "model.tasks",
+           baseurl: "/jdata",
+           entitytype: "tasks",
+           itemize: "idkeyed",
+           docname: projectname
+         });
+         items.init();
+         items.start();
+
+         items.bind("added", function(event) {
+           var item = event.entry;
+           item.id = event.entryId;
+         });
+         items.bind("removed", function(event) {
+           $('#something_to_be_deleted[data-id="' + event.entryId + '"]').remove();
+         });
+         items.bind("updated", function(event) {
+           var item = event.entry;
+           item.id = event.entryId;
+           var $row = $('#something_to_be_deleted[data-id="' + event.entryId + '"]');           
+           var $item = $("#some_template-template").tmpl(item);
+           $row.replaceWith($item);
+         });
+       }
     </script>
   </head>
   <body class="modal">
     <div id="container">
       <div id="joinbuttons" class="logo">
         <img src="./images/logo.png">
-        Welcome, <span class="username">[[Blank]]</span>
+        <span class="username"></span>  <span class="link-logout">[Logout]</span>
       </div>
     </div>
     <div id="dialogs">
@@ -126,11 +146,25 @@
       </form>
       <form id="name-dialog" class="dialog" action="" method="POST">
         <h2>Please enter your <span>name</span></h2>
-        <br>
-        <label for="">Name: </label><input type="text" class="next" name="username" value="tyip"/>
-        <br>
+        <br/>
+        <label for="">Your Email: <input type="text" class="next required email" name="useralias" value=""/></label>
+        <br/>
+        <label for="">Project Name: <input type="text" class="next required" name="projectname" value=""/></label>
+        <br/>
         <input type="submit" class="next" value="Done"/>
       </form>
+      <form id="issue-dialog" class="dialog" action="" method="POST">
+        <div class="content"></div>
+        <br/>
+        <input type="button" class="cancel" value="Dismiss"/>
+      </form>
+      <form id="confirm-dialog" class="dialog" action="" method="POST">
+        <div class="content"></div>
+        <br/>
+        <input type="submit" value="Delete"/>
+        <input type="button" class="cancel" value="Cancel"/>
+      </form>
+
       <form id="browser-dialog" class="dialog show" action="" method="POST">
         <h2>Project is optimized for <span>Chrome</span></h2>
         Use Chrome for the best result
