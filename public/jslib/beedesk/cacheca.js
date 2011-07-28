@@ -587,9 +587,9 @@ function SimpleDataSet(conf) {
     } else {
       var count = 0;
       innerset.browse(function(id, item) {
-        if (Items.match(filters, item)) {
+        if (Items.match(filters, id, item)) {
           count++;
-          fn(id, item);
+          return fn(id, item);
         }
       }, myErrFn, function() {
         sumFn(count);
