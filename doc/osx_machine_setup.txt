@@ -1,0 +1,192 @@
+brew Python environment setup on OSX
+
+Install latest Xcode from apple 
+
+
+*Install Brew
+	sudo mkdir -p /usr/local
+	sudo chown -R $USER /usr/local
+	curl -Lsf http://github.com/mxcl/homebrew/tarball/master | tar xz --strip 1 -C/usr/local
+
+	# Now your packages will be instlled in /usr/local/Cellar
+	
+	
+*Install Git
+	brew install git
+
+
+*Update brew
+	brew update
+	
+	
+
+
+
+
+
+===================================DB SETUP
+
+#setup db-----------------------------------------
+
+*install postgress
+  	brew install postgres
+  
+
+
+	If builds of PostgreSQL 9 are failing and you have version 8.x installed,
+	you may need to remove the previous version first. See:
+	  https://github.com/mxcl/homebrew/issues/issue/2510
+
+	To build plpython against a specific Python, set PYTHON prior to brewing:
+	  PYTHON=/usr/local/bin/python  brew install postgresql
+	See:
+	  http://www.postgresql.org/docs/9.0/static/install-procedure.html
+
+
+	If this is your first install, create a database with:
+	    initdb /usr/local/var/postgres
+
+	If this is your first install, automatically load on login with:
+	    mkdir -p ~/Library/LaunchAgents
+	    cp /usr/local/Cellar/postgresql/9.0.4/org.postgresql.postgres.plist ~/Library/LaunchAgents/
+	    launchctl load -w ~/Library/LaunchAgents/org.postgresql.postgres.plist
+
+	If this is an upgrade and you already have the org.postgresql.postgres.plist loaded:
+	    launchctl unload -w ~/Library/LaunchAgents/org.postgresql.postgres.plist
+	    cp /usr/local/Cellar/postgresql/9.0.4/org.postgresql.postgres.plist ~/Library/LaunchAgents/
+	    launchctl load -w ~/Library/LaunchAgents/org.postgresql.postgres.plist
+
+	Or start manually with:
+	    pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+
+	And stop with:
+	    pg_ctl -D /usr/local/var/postgres stop -s -m fast
+
+	If you want to install the postgres gem, including ARCHFLAGS is recommended:
+	    env ARCHFLAGS="-arch x86_64" gem install pg
+
+	To install gems without sudo, see the Homebrew wiki.
+
+	http://github.com/mxcl/homebrew/commits/master/Library/Formula/postgresql.rb
+
+* create db user
+	# -d can create dbs, -S no superuser, -R can't create roles, -P ask for new password.
+	createuser -d -S -R -P db_user
+
+
+====================Other useful software 
+
+
+
+
+*Install PGAdmin3 
+	http://www.pgadmin.org/download/macosx.php
+	
+
+* Install Smartgit
+	http://www.syntevo.com/smartgit/download.html
+
+
+
+
+
+
+    * Setup git SSH 
+    	http://help.github.com/mac-set-up-git/
+
+
+    * create this file ~/.gitignore_global with below content 
+
+    # Compiled source #
+    ###################
+    *.com
+    *.class
+    *.dll
+    *.exe
+    *.o
+    *.so
+    *.pyc
+
+    # Packages #
+    ############
+    # it's better to unpack these files and commit the raw source
+    # git has its own built in compression methods
+    *.7z
+    *.dmg
+    *.gz
+    *.iso
+    *.jar
+    *.rar
+    *.tar
+    *.zip
+
+    # Logs and databases #
+    ######################
+    *.log
+    *.sql
+    *.sqlite
+
+    # OS generated files #
+    ######################
+    .DS_Store?
+    ehthumbs.db
+    Icon?
+    Thumbs.db
+    .DS_Store
+
+    * register gitignore
+    	git config --global core.excludesfile ~/.gitignore_global
+
+    * put these in ~/.gitconfig
+
+    [user]
+    	name = David Dehghan
+    	email = ddehghan@gmail.com
+    [github]
+    	user = ddehghan
+    	token = 88e90e62f478db534997ed04d2ac5ca8
+    [core]
+    	excludesfile = /Users/daviddehghan/.gitignore_global
+    	editor = mate -w
+    	pager = less -FRSX
+    	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+    # read	http://stackoverflow.com/questions/267761/what-does-your-gitconfig-contain
+
+    [color]
+        diff = auto
+        status = auto
+        branch = auto
+        interactive = auto
+        ui = true
+        pager = true
+
+    [color "branch"]
+        current = yellow reverse
+        local = yellow
+        remote = green
+
+    [color "diff"]
+        meta = yellow bold
+        frag = magenta bold
+        old = red bold
+        new = green bold
+
+    [color "status"]
+        added = yellow
+        changed = green
+        untracked = cyan
+
+    [alias] 
+        st = status
+        ci = commit
+        co = checkout
+        w = whatchanged
+
+    [apply]
+        whitespace = fix
+
+
+
+
+
