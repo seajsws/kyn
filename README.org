@@ -23,11 +23,6 @@ Koala -> http://github.com/arsduo/koala
 
 http://kyn.heroku.com/
 
-<<<<<<< HEAD
-
-
-=======
 
 
 Wed Jul 27 20:13:53 PDT 2011
->>>>>>> 882ee878d273f30bbd9910671f59fc6473512ec7
