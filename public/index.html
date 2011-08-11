@@ -54,6 +54,8 @@
 
              $("body").removeClass("modal");
              $dialog.removeClass("show");
+
+             yield();
            }
          });
          $(".link-logout").bind("click", function(event) {
@@ -70,34 +72,48 @@
          $("#browser-dialog input[type='button'].next").bind("click", function(event) {
            $(this).closest(".dialog").removeClass("show");
            $("body").removeClass("modal");
+
+           yield();
          });
 
-         // do user
-         var useralias = localStorage.getItem(App.KEY.USER_ALIAS);
-         var projectname = localStorage.getItem(App.KEY.PROJECT_NAME);
-         if (!useralias || !projectname) {
-           $("#name-dialog").addClass("show").find("input:not([readonly]").first().focus();
-           $("body").addClass("modal");
-         } else {
-           App.useralias = useralias; 
-           App.projectname = projectname;
-           App.users.push(useralias);
-
-           bindmodel(projectname);
-
-           $(".username").text("Welcome, " + useralias);
-           $(".projectname").text("Project " + projectname);
-           $("head title").text("Project " + projectname + " - Aspen");
-         }
-
-         // detect browser
-         var agent = navigator.userAgent.toLowerCase();
-         if (agent.search("webkit") > -1 || agent.search("chrome") > -1) {
-           $("#browser-dialog input[type='button']").click();
-         } else {
-           $(".dialog").removeClass("show");
-           $("#browser-dialog").addClass("show");
-         }
+         var actions = [
+           function() {
+             // detect browser
+             var agent = navigator.userAgent.toLowerCase();
+             if (agent.search("webkit") > -1 || agent.search("chrome") > -1) {
+               $("#browser-dialog input[type='button']").click();
+               yield();
+             } else {
+               $(".dialog").removeClass("show");
+               $("#browser-dialog").addClass("show");
+             }
+           },
+           function() {
+             // do user
+             var useralias = localStorage.getItem(App.KEY.USER_ALIAS);
+             var projectname = localStorage.getItem(App.KEY.PROJECT_NAME);
+             if (!useralias || !projectname) {
+               $("#name-dialog").addClass("show").find("input:not([readonly]").first().focus();
+               $("body").addClass("modal");
+             } else {
+               App.useralias = useralias; 
+               App.projectname = projectname;
+               App.users.push(useralias);
+    
+               bindmodel(projectname);
+    
+               $(".username").text("Welcome, " + useralias);
+               $(".projectname").text("Project " + projectname);
+               $("head title").text("Project " + projectname + " - Aspen");
+             }
+           }
+         ];
+         var i = 0;
+         var yield = function() {
+           var action = actions[i++];
+           action();
+         };
+         yield();
        });
 
        var bindmodel = function(projectname) {
