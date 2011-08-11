@@ -72,16 +72,10 @@
            $("body").removeClass("modal");
          });
 
-         // detect browser
-         var agent = navigator.userAgent.toLowerCase();
-         if (agent.search("webkit") > -1 || agent.search("chrome") > -1) { 
-           $("#browser-dialog input[type='button']").click();
-         }
-
          // do user
          var useralias = localStorage.getItem(App.KEY.USER_ALIAS);
          var projectname = localStorage.getItem(App.KEY.PROJECT_NAME);
-         if (!useralias || !projectname) {           
+         if (!useralias || !projectname) {
            $("#name-dialog").addClass("show").find("input:not([readonly]").first().focus();
            $("body").addClass("modal");
          } else {
@@ -94,6 +88,15 @@
            $(".username").text("Welcome, " + useralias);
            $(".projectname").text("Project " + projectname);
            $("head title").text("Project " + projectname + " - Aspen");
+         }
+
+         // detect browser
+         var agent = navigator.userAgent.toLowerCase();
+         if (agent.search("webkit") > -1 || agent.search("chrome") > -1) {
+           $("#browser-dialog input[type='button']").click();
+         } else {
+           $(".dialog").removeClass("show");
+           $("#browser-dialog").addClass("show");
          }
        });
 
