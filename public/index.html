@@ -118,7 +118,17 @@
 
          $("#add-dialog").validate();
          $("#add-dialog").bind("submit", function(event) {
+           event.preventDefault();
+           event.stopPropagation();
+
            alert("submitted");
+
+           /* thomasleaf -> s
+           var $form = $(this);
+           var namearray = $form.serializeArray();
+
+           items.create(namearray, Const.EMPTY_FN, Const.EMPTY_FN);
+            */
          });
          $(".add-newexpert").bind("click", function(event) {
            $("body").addClass("modal");
